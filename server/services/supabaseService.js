@@ -24,9 +24,15 @@ export const uploadImage = async (buffer, fileName, contentType) => {
       contentType,
       upsert: true
     })
-  if (error) throw error
+  if (error) {
+    console.error('Supabase upload error:', error)
+    throw new Error(`Image upload failed: ${error.message}`)
+  }
   const { data: signedData } = await supabase.storage
     .from('Crayfish-Reports')
     .createSignedUrl(`habitat-images/${fileName}`, 60 * 60 * 24 * 365)
+  if (!signedData) {
+    throw new Error('Failed to generate signed URL for image')
+  }
   return signedData.signedUrl
 }
