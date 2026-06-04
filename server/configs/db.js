@@ -12,14 +12,17 @@ if (process.env.DATABASE_URL) {
     poolConfig.connectionString = process.env.DATABASE_URL;
     poolConfig.ssl = { rejectUnauthorized: false };
 } else {
-    Object.assign(poolConfig, {
+    const pgConfig = {
         user: process.env.PG_USER,
         host: process.env.PG_HOST,
         database: process.env.PG_DATABASE,
         password: process.env.PG_PASSWORD,
         port: process.env.PG_PORT,
-        ssl: { rejectUnauthorized: false },
-    });
+    };
+    if (pgConfig.host && pgConfig.host !== 'localhost' && pgConfig.host !== '127.0.0.1') {
+        pgConfig.ssl = { rejectUnauthorized: false };
+    }
+    Object.assign(poolConfig, pgConfig);
 }
 
 const db = new pg.Pool(poolConfig);
