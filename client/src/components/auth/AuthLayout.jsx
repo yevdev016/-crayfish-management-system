@@ -18,7 +18,7 @@ const AuthLayout = ({children, isLogin}) => {
                 <span>OR</span>
             </div>
 
-            <a href={`${API_URL}/auth/google/`} className='google-btn'>
+            <a href={`${API_URL}/auth/google`} className='google-btn'>
                 <img src={google} alt="Google" />
                 Continue with google
             </a>
