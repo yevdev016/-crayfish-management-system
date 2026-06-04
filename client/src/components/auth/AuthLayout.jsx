@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import './AuthLayout.css'
 import google from '@/assets/icon-google.svg'
-import logo from '@/assets/nav-logo.png'
+import logo from '@/assets/craylogo-removebg-preview.png'
 
 const API_URL = import.meta.env.VITE_API_URL
 
