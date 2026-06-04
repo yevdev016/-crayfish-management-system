@@ -99,7 +99,6 @@ const initDatabase = async () => {
         await db.query(createReportsTable);
     } catch(err) {
         console.log("Error Initializing db", err);
-        process.exit(1);
     }
 }
 export default initDatabase;
