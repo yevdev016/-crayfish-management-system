@@ -1,10 +1,7 @@
 import express from 'express'
 import passport from 'passport';
 import dotenv from 'dotenv'
-import path from 'path'
-import { fileURLToPath } from 'url'
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config();
 import cors from 'cors'
 import initDatabase from './configs/initDb.js';
 import authRoutes from './routes/authRoutes.js'
@@ -37,14 +34,6 @@ app.use('/api/lifecycle', lifecycleRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/ai', aiRoutes);
-
-app.use((err, req, res, next) => {
-    if (err.type === 'entity.too.large') {
-        return res.status(413).json({ message: 'Image too large. Maximum 10MB.' });
-    }
-    console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
-});
 
 if (!process.env.VERCEL) {
     app.listen(port, () => {
