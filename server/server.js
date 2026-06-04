@@ -1,10 +1,11 @@
 import express from 'express'
 import passport from 'passport';
 import dotenv from 'dotenv'
-dotenv.config();
-import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+dotenv.config({ path: path.join(__dirname, '.env') });
+import cors from 'cors'
 import initDatabase from './configs/initDb.js';
 import authRoutes from './routes/authRoutes.js'
 import habitatRoutes from './routes/habitatRoutes.js'
@@ -17,7 +18,6 @@ import './configs/passport.js'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express();
 app.use(helmet());
 const port = process.env.SERVER_PORT || 3000;
