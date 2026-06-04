@@ -1,5 +1,11 @@
-.landing-page {
+.landing-page-wrapper {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+}
+
+.landing-page-content {
+  flex: 1;
 }
 
 /* Hero Section */

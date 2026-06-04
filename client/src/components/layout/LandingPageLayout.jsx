@@ -4,11 +4,13 @@ import { Outlet } from "react-router-dom";
 import './LandingPageLayout.css'
 const LandingPageLayout = () => {
     return (
-        <>
+        <div className="landing-page-wrapper">
             <Header />
-            <Outlet />
+            <main className="landing-page-content">
+                <Outlet />
+            </main>
             <Footer />
-        </>
+        </div>
           
     );
 }
