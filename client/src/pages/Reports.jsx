@@ -21,15 +21,28 @@ const isReportUsable = (url) => {
   return Date.now() < exp
 }
 
+const getMonthKey = (date) =>
+  `${date.getFullYear()}-${date.getMonth()}`
+
 const Reports = () => {
   const [generated, setGenerated] = useState([])
   const [loading, setLoading] = useState(null)
   const [error, setError] = useState('')
+  const [monthlyDone, setMonthlyDone] = useState(new Set())
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
         const data = await getReportHistory()
+        const now = new Date()
+        const currentMonth = getMonthKey(now)
+        const doneTypes = new Set()
+        data.forEach(r => {
+          if (getMonthKey(new Date(r.created_at)) === currentMonth) {
+            doneTypes.add(r.report_type)
+          }
+        })
+        setMonthlyDone(doneTypes)
         setGenerated(data
           .map(r => ({
             name: r.report_name,
@@ -50,6 +63,7 @@ const Reports = () => {
     setError('')
     try {
       const data = await generateReport(type)
+      setMonthlyDone(prev => new Set(prev).add(type))
       setGenerated(prev => [{
         name: data.reportName,
         url: data.pdfUrl,
@@ -74,6 +88,7 @@ const Reports = () => {
           type={type}
           onGenerate={() => handleGenerate(type)}
           loading={loading === type}
+          disabled={monthlyDone.has(type)}
         />
       ))}
       <div className="reports-generated">

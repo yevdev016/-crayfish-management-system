@@ -37,7 +37,7 @@ const descriptions = {
     activity: 'Log of recent actions and changes made across the system.',
 }
 
-const ReportCard = ({ type, onGenerate, loading }) => {
+const ReportCard = ({ type, onGenerate, loading, disabled }) => {
     return (
         <div className="report-card">
             <div className="report-card-icon">{icons[type]}</div>
@@ -45,8 +45,8 @@ const ReportCard = ({ type, onGenerate, loading }) => {
                 <h3 className="report-card-title">{type === 'sales-stock' ? 'Sales Stock' : type.charAt(0).toUpperCase() + type.slice(1)} Report</h3>
                 <p className="report-card-desc">{descriptions[type]}</p>
             </div>
-            <button className="report-card-btn" onClick={onGenerate} disabled={loading}>
-                {loading ? 'Generating...' : 'Generate Report'}
+            <button className="report-card-btn" onClick={onGenerate} disabled={loading || disabled}>
+                {loading ? 'Generating...' : disabled ? 'Already generated this month' : 'Generate Report'}
             </button>
         </div>
     )

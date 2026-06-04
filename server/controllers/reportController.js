@@ -52,6 +52,16 @@ export const generateReportController = async (req, res) => {
   const { type } = req.body
   const userId = req.user.id
   try {
+    const existing = await db.query(
+      `SELECT id FROM reports
+       WHERE user_id = $1
+         AND report_type = $2
+         AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_TIMESTAMP)`,
+      [userId, type]
+    )
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ message: `You have already generated a ${type} report this month. Please wait until next month.` })
+    }
     let data
     switch (type) {
       case 'habitat':

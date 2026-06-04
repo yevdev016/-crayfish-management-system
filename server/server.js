@@ -12,6 +12,7 @@ import saleStockRoutes from './routes/saleStockRoutes.js'
 import lifecycleRoutes from './routes/lifecycleRoutes.js'
 import activityRoutes from './routes/activityRoutes.js'
 import reportRoutes from './routes/reportRoutes.js'
+import aiRoutes from './routes/aiRoutes.js'
 import './configs/passport.js'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
@@ -35,6 +36,7 @@ app.use('/api/sales-stock', saleStockRoutes);
 app.use('/api/lifecycle', lifecycleRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/ai', aiRoutes);
 
 if (!process.env.VERCEL) {
     app.listen(port, () => {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import './Header.css';
-import logo from '@/assets/nav-logo.png';
+import logo from '@/assets/craylogo-removebg-preview.png';
 function Header(){
     return(
         <header className="header">
