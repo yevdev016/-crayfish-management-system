@@ -5,6 +5,7 @@ import SalesStockTable from '@/components/salesStock/SalesStockTable'
 import HarvestForm from '@/components/salesStock/HarvestForm'
 import SellModal from '@/components/salesStock/SellModal'
 import DeleteConfirm from '@/components/habitats/DeleteConfirm'
+import LoadingModal from '@/components/ui/LoadingModal'
 import useSaleStock from '@/hooks/useSalesStock'
 import useHabitats from '@/hooks/useHabitats'
 
@@ -29,6 +30,7 @@ const SaleStock = () => {
     const [editing, setEditing] = useState(null)
     const [deleting, setDeleting] = useState(null)
     const [selling, setSelling] = useState(null)
+    const [saving, setSaving] = useState(false)
 
     const handleAdd = () => { setEditing(null); setShowForm(true) }
     const handleEdit = (e) => { setEditing(e); setShowForm(true) }
@@ -36,6 +38,7 @@ const SaleStock = () => {
     const handleSell = (e) => setSelling(e)
 
     const handleSave = async (data) => {
+        setSaving(true)
         try {
             if (editing) {
                 await updateEntry(editing.id, data)
@@ -47,22 +50,37 @@ const SaleStock = () => {
             refreshHabitats()
         } catch (err) {
             console.error('Save failed', err)
+            alert(err.response?.data?.message || 'Failed to save entry')
+        } finally {
+            setSaving(false)
         }
     }
 
     const handleDeleteConfirm = async (id) => {
+        setSaving(true)
         try {
             await deleteEntry(id)
             setDeleting(null)
             refreshHabitats()
         } catch (err) {
             console.error('Delete failed', err)
+            alert(err.response?.data?.message || 'Failed to delete entry')
+        } finally {
+            setSaving(false)
         }
     }
 
     const handleSellConfirm = async (id, qty, customerName) => {
-        await sellEntry(id, customerName, qty)
-        setSelling(null)
+        setSaving(true)
+        try {
+            await sellEntry(id, customerName, qty)
+            setSelling(null)
+        } catch (err) {
+            console.error('Sell failed', err)
+            alert(err.response?.data?.message || 'Failed to process sale')
+        } finally {
+            setSaving(false)
+        }
     }
 
     if (isLoading) {
@@ -154,6 +172,8 @@ const SaleStock = () => {
                     onCancel={() => setDeleting(null)}
                 />
             )}
+
+            {saving && <LoadingModal message={editing ? 'Updating entry...' : selling ? 'Processing sale...' : 'Saving entry...'} />}
         </>
     )
 }

@@ -3,6 +3,7 @@ import HabitatsHeader from '@/components/habitats/HabitatsHeader'
 import HabitatList from '@/components/habitats/HabitatList'
 import HabitatForm from '@/components/habitats/HabitatForm'
 import DeleteConfirm from '@/components/habitats/DeleteConfirm'
+import LoadingModal from '@/components/ui/LoadingModal'
 import useHabitats from '@/hooks/useHabitats'
 
 const Habitats = () => {
@@ -10,6 +11,7 @@ const Habitats = () => {
     const [showForm, setShowForm] = useState(false)
     const [editingHabitat, setEditingHabitat] = useState(null)
     const [deletingHabitat, setDeletingHabitat] = useState(null)
+    const [saving, setSaving] = useState(false)
 
     const handleAdd = () => {
         setEditingHabitat(null)
@@ -22,6 +24,7 @@ const Habitats = () => {
     }
 
     const handleSave = async (data) => {
+        setSaving(true)
         try {
             if (editingHabitat) {
                await updateHabitat(editingHabitat.id, data)
@@ -32,8 +35,10 @@ const Habitats = () => {
             setEditingHabitat(null)
         } catch(err){
             console.error(err)
+            alert(err.response?.data?.message || 'Failed to save habitat')
+        } finally {
+            setSaving(false)
         }
-        
     }
 
     const handleDelete = (habitat) => {
@@ -41,13 +46,16 @@ const Habitats = () => {
     }
 
     const handleDeleteConfirm = async(id) => {
+        setSaving(true)
         try {
            await deleteHabitat(id)
             setDeletingHabitat(null)
         } catch(err){
             console.error(err)
+            alert(err.response?.data?.message || 'Failed to delete habitat')
+        } finally {
+            setSaving(false)
         }
-        
     }
 
     return (
@@ -71,6 +79,8 @@ const Habitats = () => {
                     onCancel={() => setDeletingHabitat(null)}
                 />
             )}
+
+            {saving && <LoadingModal message={editingHabitat ? 'Updating habitat...' : 'Creating habitat...'} />}
         </>
     )
 }

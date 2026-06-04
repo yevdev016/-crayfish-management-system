@@ -2,6 +2,7 @@ import { useState } from 'react'
 import LifecycleHeader from '@/components/lifecycle/LifecycleHeader'
 import LifecycleFlow from '@/components/lifecycle/LifecycleFlow'
 import TransitionForm from '@/components/lifecycle/TransitionForm'
+import LoadingModal from '@/components/ui/LoadingModal'
 import useLifecycle from '@/hooks/useLifecycle'
 import useHabitats from '@/hooks/useHabitats'
 import './Lifecycle.css'
@@ -11,6 +12,7 @@ const Lifecycle = () => {
     const { stageTotals, transitions, addTransition, updateTransition, deleteTransition } = useLifecycle(habitats)
     const [showForm, setShowForm] = useState(false)
     const [editingTransition, setEditingTransition] = useState(null)
+    const [saving, setSaving] = useState(false)
     const [search, setSearch] = useState('')
 
     const habitatNames = habitats.map(h => h.name)
@@ -22,6 +24,7 @@ const Lifecycle = () => {
             alert('Selected habitat not found. Please refresh and try again.')
             return
         }
+        setSaving(true)
         try {
             if (editingTransition) {
                 await updateTransition(editingTransition.id, { count: data.count, date: data.date })
@@ -37,7 +40,33 @@ const Lifecycle = () => {
             setShowForm(false)
             setEditingTransition(null)
         } catch (err) {
-            alert(err.response?.data?.message || err.message || 'Failed to save transition')
+            const detail = err.response?.data?.errors
+                ? err.response.data.errors.map(e => `${e.field}: ${e.message}`).join('\n')
+                : err.response?.data?.message
+            alert(detail || err.message || 'Failed to save transition')
+        } finally {
+            setSaving(false)
+        }
+    }
+        try {
+            if (editingTransition) {
+                await updateTransition(editingTransition.id, { count: data.count, date: data.date })
+            } else {
+                await addTransition({
+                    habitat_id: found.id,
+                    from_stage: data.fromStage,
+                    to_stage: data.toStage,
+                    count: data.count,
+                    date: data.date,
+                })
+            }
+            setShowForm(false)
+            setEditingTransition(null)
+        } catch (err) {
+            const detail = err.response?.data?.errors
+                ? err.response.data.errors.map(e => `${e.field}: ${e.message}`).join('\n')
+                : err.response?.data?.message
+            alert(detail || err.message || 'Failed to save transition')
         }
     }
 
@@ -123,6 +152,8 @@ const Lifecycle = () => {
                     onCancel={() => { setShowForm(false); setEditingTransition(null) }}
                 />
             )}
+
+            {saving && <LoadingModal message="Recording transition..." />}
         </>
     )
 }
