@@ -1,0 +1,449 @@
+{
+  "info": {
+    "name": "Crayfish Management System API",
+    "description": "Full API documentation for the Crayfish Management System. All authenticated routes (except auth and AI chat) require a JWT cookie set via login.\n\n**Base URL:** `{{base_url}}`\n\n**Auth flow:**\n1. POST {{base_url}}/api/auth/signup → verify OTP → POST {{base_url}}/api/auth/signin\n2. The JWT is set as an httpOnly cookie on signin.\n3. All authenticated routes automatically use that cookie.\n\nFor Google OAuth, visit {{base_url}}/api/auth/google in a browser.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            },
+            "description": "Register a new account. An OTP will be sent to the email for verification."
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/verify-otp",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "verify-otp"]
+            },
+            "description": "Verify the 6-digit OTP sent to your email after signup."
+          }
+        },
+        {
+          "name": "Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/resend-otp",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "resend-otp"]
+            },
+            "description": "Resend the OTP verification code to your email."
+          }
+        },
+        {
+          "name": "Sign In",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signin",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signin"]
+            },
+            "description": "Sign in with email and password. The JWT token is set as an httpOnly cookie automatically."
+          }
+        },
+        {
+          "name": "Sign Out",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/auth/signout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signout"]
+            },
+            "description": "Sign out — clears the JWT cookie."
+          }
+        },
+        {
+          "name": "Check Auth",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/auth/check-auth",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "check-auth"]
+            },
+            "description": "Check if the current session is authenticated. Requires a valid JWT cookie."
+          }
+        },
+        {
+          "name": "Google OAuth",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/auth/google",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "google"]
+            },
+            "description": "Initiate Google OAuth login. Open this in a browser — it redirects to Google's consent screen."
+          }
+        }
+      ],
+      "description": "Authentication endpoints. Sign up, verify email via OTP, sign in, and manage sessions."
+    },
+    {
+      "name": "Habitats",
+      "item": [
+        {
+          "name": "Get All Habitats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/habitats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "habitats"]
+            },
+            "description": "Get all habitats for the authenticated user."
+          }
+        },
+        {
+          "name": "Get Habitat by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/habitats/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "habitats", "1"]
+            },
+            "description": "Get a single habitat by its ID."
+          }
+        },
+        {
+          "name": "Create Habitat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pond A\",\n  \"species\": \"Australian Red Claw\",\n  \"count\": 100,\n  \"stage\": \"Adult\",\n  \"image\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/habitats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "habitats"]
+            },
+            "description": "Create a new habitat."
+          }
+        },
+        {
+          "name": "Update Habitat",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pond A Updated\",\n  \"count\": 120,\n  \"stage\": \"Juvenile\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/habitats/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "habitats", "1"]
+            },
+            "description": "Update a habitat. All fields are optional — only send what you want to change."
+          }
+        },
+        {
+          "name": "Delete Habitat",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/habitats/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "habitats", "1"]
+            },
+            "description": "Delete a habitat and all its associated data (cascades to lifecycle, sales stock, etc.)."
+          }
+        }
+      ],
+      "description": "CRUD operations for crayfish habitats."
+    },
+    {
+      "name": "Sales Stock",
+      "item": [
+        {
+          "name": "Get All Sales Stock",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/sales-stock",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-stock"]
+            },
+            "description": "Get all sales stock entries for the authenticated user."
+          }
+        },
+        {
+          "name": "Create Sales Stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"habitat_id\": 1,\n  \"price\": 150.00,\n  \"count\": 50,\n  \"notes\": \"Ready for harvest\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sales-stock",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-stock"]
+            },
+            "description": "Create a new sales stock entry linked to a habitat."
+          }
+        },
+        {
+          "name": "Update Sales Stock",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 175.00,\n  \"notes\": \"Price updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sales-stock/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-stock", "1"]
+            },
+            "description": "Update a sales stock entry. All fields are optional."
+          }
+        },
+        {
+          "name": "Sell Stock",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"qty\": 10,\n  \"customer_name\": \"John Buyer\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sales-stock/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-stock", "1"]
+            },
+            "description": "Sell a quantity from a sales stock entry. Reduces the available count."
+          }
+        },
+        {
+          "name": "Delete Sales Stock",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/sales-stock/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sales-stock", "1"]
+            },
+            "description": "Delete a sales stock entry."
+          }
+        }
+      ],
+      "description": "Manage sales inventory, pricing, and partial sales tracking."
+    },
+    {
+      "name": "Lifecycle",
+      "item": [
+        {
+          "name": "Get All Lifecycles",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/lifecycle",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lifecycle"]
+            },
+            "description": "Get all lifecycle transitions for the authenticated user."
+          }
+        },
+        {
+          "name": "Create Lifecycle",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"habitat_id\": 1,\n  \"from_stage\": \"Juvenile\",\n  \"to_stage\": \"Adult\",\n  \"count\": 20,\n  \"date\": \"2026-06-04\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lifecycle",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lifecycle"]
+            },
+            "description": "Record a lifecycle stage transition. Valid stages: Berried, Crayling, Juvenile, Adult, Breeder."
+          }
+        },
+        {
+          "name": "Update Lifecycle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"count\": 25,\n  \"date\": \"2026-06-05\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lifecycle/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lifecycle", "1"]
+            },
+            "description": "Update a lifecycle transition's count and/or date."
+          }
+        },
+        {
+          "name": "Delete Lifecycle",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/lifecycle/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lifecycle", "1"]
+            },
+            "description": "Delete a lifecycle transition."
+          }
+        }
+      ],
+      "description": "Track crayfish lifecycle stage transitions (Berried → Crayling → Juvenile → Adult → Breeder)."
+    },
+    {
+      "name": "Activities",
+      "item": [
+        {
+          "name": "Get Activities",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/activities",
+              "host": ["{{base_url}}"],
+              "path": ["api", "activities"]
+            },
+            "description": "Get the recent activity log for the authenticated user."
+          }
+        }
+      ],
+      "description": "View recent actions and changes made across the system."
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"habitat\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reports/generate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "generate"]
+            },
+            "description": "Generate an AI-powered PDF report. Types: habitat, sales-stock, lifecycle, activity.\n\n**Limit:** 1 report per type per month."
+          }
+        },
+        {
+          "name": "Get Report History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/reports/history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "history"]
+            },
+            "description": "Get the history of all generated PDF reports."
+          }
+        }
+      ],
+      "description": "AI-powered report generation using Groq. Generate and download PDF reports."
+    },
+    {
+      "name": "AI Assistant",
+      "item": [
+        {
+          "name": "Chat with AI",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"What are the best conditions for breeding crayfish?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/chat",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "chat"]
+            },
+            "description": "Ask CrayfishAI anything about crayfish farming. Public endpoint — no auth required.\n\n**Rate limit:** 10 requests per minute."
+          }
+        }
+      ],
+      "description": "Public AI assistant for crayfish farming questions."
+    }
+  ]
+}
