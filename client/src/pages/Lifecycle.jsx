@@ -22,19 +22,23 @@ const Lifecycle = () => {
             alert('Selected habitat not found. Please refresh and try again.')
             return
         }
-        if (editingTransition) {
-            await updateTransition(editingTransition.id, { count: data.count, date: data.date })
-        } else {
-            await addTransition({
-                habitat_id: found.id,
-                from_stage: data.fromStage,
-                to_stage: data.toStage,
-                count: data.count,
-                date: data.date,
-            })
+        try {
+            if (editingTransition) {
+                await updateTransition(editingTransition.id, { count: data.count, date: data.date })
+            } else {
+                await addTransition({
+                    habitat_id: found.id,
+                    from_stage: data.fromStage,
+                    to_stage: data.toStage,
+                    count: data.count,
+                    date: data.date,
+                })
+            }
+            setShowForm(false)
+            setEditingTransition(null)
+        } catch (err) {
+            alert(err.response?.data?.message || err.message || 'Failed to save transition')
         }
-        setShowForm(false)
-        setEditingTransition(null)
     }
 
     const handleEdit = (t) => {
