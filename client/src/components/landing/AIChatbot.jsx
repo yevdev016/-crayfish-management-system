@@ -9,6 +9,7 @@ const AIChatbot = () => {
   const [messages, setMessages] = useState([{ role: 'ai', text: WELCOME_MSG }])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [cooldown, setCooldown] = useState(false)
   const listRef = useRef(null)
 
   useEffect(() => {
@@ -19,10 +20,12 @@ const AIChatbot = () => {
 
   const handleSend = async () => {
     const msg = input.trim()
-    if (!msg || loading) return
+    if (!msg || loading || cooldown) return
     setInput('')
     setMessages(prev => [...prev, { role: 'user', text: msg }])
     setLoading(true)
+    setCooldown(true)
+    setTimeout(() => setCooldown(false), 2000)
     try {
       const reply = await askAI(msg)
       setMessages(prev => [...prev, { role: 'ai', text: reply }])
