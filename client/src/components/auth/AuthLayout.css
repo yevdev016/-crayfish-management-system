@@ -17,8 +17,9 @@
 }
 
 .img-logo {
-    height: 45px;
+    height: 80px;
     width: auto;
+    margin-bottom: 70px;
 }
 
 .google-btn {
@@ -104,7 +105,7 @@
     }
 
     .img-logo {
-        width: 120px;
+        width: 70px;
     }
 
     .terms-services-container span {
@@ -120,6 +121,7 @@
     }
 
     .img-logo {
-        width: 100px;
+        width: 70px;
+        width: auto;
     }
 }
