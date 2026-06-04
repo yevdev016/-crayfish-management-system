@@ -48,27 +48,6 @@ const Lifecycle = () => {
             setSaving(false)
         }
     }
-        try {
-            if (editingTransition) {
-                await updateTransition(editingTransition.id, { count: data.count, date: data.date })
-            } else {
-                await addTransition({
-                    habitat_id: found.id,
-                    from_stage: data.fromStage,
-                    to_stage: data.toStage,
-                    count: data.count,
-                    date: data.date,
-                })
-            }
-            setShowForm(false)
-            setEditingTransition(null)
-        } catch (err) {
-            const detail = err.response?.data?.errors
-                ? err.response.data.errors.map(e => `${e.field}: ${e.message}`).join('\n')
-                : err.response?.data?.message
-            alert(detail || err.message || 'Failed to save transition')
-        }
-    }
 
     const handleEdit = (t) => {
         setEditingTransition(t)

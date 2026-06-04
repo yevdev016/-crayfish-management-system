@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import Inputs from "../ui/Inputs";
 import Button from '@/components/ui/Buttons';
+import LoadingModal from '@/components/ui/LoadingModal';
 import AuthLayout from './AuthLayout';
 import { signin, verifyOtp, resendOtp } from '@/services/authServices';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
-const OtpForm = ({ email, onVerified, onCancel }) => {
+const OtpForm = ({ email, onVerified, onCancel, setParentLoading }) => {
     const { setIsError, isError } = useAuth()
     const [loading, setLoading] = useState(false)
     const [otp, setOtp] = useState(['', '', '', '', '', ''])
@@ -37,13 +38,14 @@ const OtpForm = ({ email, onVerified, onCancel }) => {
         const code = otp.join('')
         if (code.length !== 6) { setIsError('Please enter the full 6-digit code'); return }
         setLoading(true)
+        setParentLoading(true)
         setIsError('')
         try {
             await verifyOtp(email, code)
             onVerified()
         } catch (err) {
             setIsError(err.message)
-        } finally { setLoading(false) }
+        } finally { setLoading(false); setParentLoading(false) }
     }
 
     const handleResend = async () => {
@@ -90,6 +92,7 @@ const LoginForm = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [verifyEmail, setVerifyEmail] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const handleChange = (e) => {
         setIsError('');
@@ -99,6 +102,7 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true)
         try {
             const response = await signin(formData);
             if(response.status === 200){
@@ -112,10 +116,13 @@ const LoginForm = () => {
             } else {
                 setIsError(err.message);
             }
+        } finally {
+            setLoading(false)
         }
     }
 
     const handleVerified = async () => {
+        setLoading(true)
         try {
             const response = await signin(formData);
             if (response.status === 200) {
@@ -125,14 +132,19 @@ const LoginForm = () => {
             }
         } catch (err) {
             setIsError(err.message)
+        } finally {
+            setLoading(false)
         }
     }
 
     if (verifyEmail) {
         return (
-            <AuthLayout isLogin={true}>
-                <OtpForm email={verifyEmail} onVerified={handleVerified} onCancel={() => setVerifyEmail('')} />
-            </AuthLayout>
+            <>
+                <AuthLayout isLogin={true}>
+                    <OtpForm email={verifyEmail} onVerified={handleVerified} onCancel={() => setVerifyEmail('')} setParentLoading={setLoading} />
+                </AuthLayout>
+                {loading && <LoadingModal message="Verifying OTP..." />}
+            </>
         )
     }
 
@@ -142,9 +154,10 @@ const LoginForm = () => {
                 <Inputs label="email" id="email" type="email" onChange={handleChange} value={formData.email} />
                 <Inputs label="Password" id="password" type="password" onChange={handleChange} value={formData.password} />
                 {isError && <p className="error">{isError}</p>}
-                <Button type="submit" variant="success" width='full'>Login</Button>   
+                <Button type="submit" variant="success" width='full' loading={loading}>Login</Button>   
             </form>
-        </AuthLayout>            
+        </AuthLayout>
+        {loading && <LoadingModal message="Signing in..." />}            
     );
 }
 export default LoginForm;

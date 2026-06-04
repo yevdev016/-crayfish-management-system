@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { signup, verifyOtp, resendOtp } from '@/services/authServices';
 import Inputs from "../ui/Inputs";
 import Button from '@/components/ui/Buttons';
+import LoadingModal from '@/components/ui/LoadingModal';
 import AuthLayout from './AuthLayout';
 import { useAuth } from '@/context/AuthContext';
 
@@ -156,6 +157,7 @@ const RegisterForm = () => {
                     </p>
                 </form>
             </AuthLayout>
+            {loading && <LoadingModal message="Creating account..." />}
         )
     }
 
@@ -193,7 +195,7 @@ const RegisterForm = () => {
                 </Button>
             </form>
         </AuthLayout>
-                
+        {loading && <LoadingModal message="Creating account..." />}    
     );
 }
 export default RegisterForm;
