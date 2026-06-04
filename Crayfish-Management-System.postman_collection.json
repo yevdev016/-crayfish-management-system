@@ -7,7 +7,7 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:3000",
+      "value": "https://crayfish-management-system-pi5p.vercel.app",
       "type": "string"
     }
   ],
